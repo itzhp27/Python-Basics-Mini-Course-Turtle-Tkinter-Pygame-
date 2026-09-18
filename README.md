@@ -83,8 +83,8 @@ Open `index.html` in any web browser to read the full lessons, including explana
 
 ## Author
 
-Made by **[Your Name]**, Computer Science student.
-GitHub: [your-username](https://github.com/your-username)
+Made by **Harris Samuel J**, Computer Science student.
+GitHub: [itzhp27](https://github.com/itzhp27)
 
 ## License
 
