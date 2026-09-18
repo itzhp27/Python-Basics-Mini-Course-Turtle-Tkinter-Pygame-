@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Basics — Turtle, Tkinter, Pygame</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#ffffff;
+    --bg-alt:#efeee8;
+    --ink:#070707;
+    --line:#070707;
+    --panel:#111111;
+    --panel-ink:#f2f2f2;
+    --on-accent:#ffffff;
+    --turtle:#1f7a34;
+    --tkinter:#1d5fd6;
+    --pygame:#e8451a;
+    --grid-line: rgba(0,0,0,0.06);
+    --font-display:'Archivo', Arial, Helvetica, sans-serif;
+    --font-mono:'JetBrains Mono','Fira Code','Courier New', monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0a0a0a;
+      --bg-alt:#151515;
+      --ink:#f2f2f2;
+      --line:#f2f2f2;
+      --panel:#1a1a1a;
+      --panel-ink:#f2f2f2;
+      --on-accent:#0a0a0a;
+      --turtle:#3fcf63;
+      --tkinter:#5b8fff;
+      --pygame:#ff6b3d;
+      --grid-line: rgba(255,255,255,0.08);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0a0a0a;
+    --bg-alt:#151515;
+    --ink:#f2f2f2;
+    --line:#f2f2f2;
+    --panel:#1a1a1a;
+    --panel-ink:#f2f2f2;
+    --on-accent:#0a0a0a;
+    --turtle:#3fcf63;
+    --tkinter:#5b8fff;
+    --pygame:#ff6b3d;
+    --grid-line: rgba(255,255,255,0.08);
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  @media (prefers-reduced-motion: no-preference){ html{scroll-behavior:smooth;} }
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important; animation:none !important;} }
+
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--font-display);
+    line-height:1.5;
+    overflow-x:hidden;
+  }
+  img{max-width:100%;}
+  a{color:inherit; text-decoration:none;}
+  *:focus-visible{outline:3px solid var(--pygame); outline-offset:2px;}
+  .wrap{max-width:1040px; margin:0 auto; padding:0 24px;}
+
+  /* ---------- header ---------- */
+  .site-header{
+    position:sticky; top:0; z-index:50;
+    background:var(--bg);
+    border-bottom:4px solid var(--line);
+  }
+  .header-inner{
+    max-width:1040px; margin:0 auto; padding:16px 24px;
+    display:flex; align-items:center; justify-content:space-between;
+    position:relative;
+  }
+  .logo{font-weight:900; font-size:1.1rem; letter-spacing:0.02em;}
+  #nav-toggle{position:absolute; opacity:0; pointer-events:none;}
+  .burger{
+    display:block; font-family:var(--font-mono); font-size:0.85rem;
+    border:2px solid var(--line); padding:6px 12px; cursor:pointer;
+    background:var(--bg);
+  }
+  .site-nav{
+    display:none; flex-direction:column; gap:0;
+    position:absolute; top:100%; left:0; right:0;
+    background:var(--bg); border-bottom:4px solid var(--line);
+  }
+  .site-nav a{
+    padding:14px 24px; border-top:1px solid var(--line);
+    font-size:0.95rem;
+  }
+  .site-nav a:hover{background:var(--ink); color:var(--bg);}
+  #nav-toggle:checked ~ .site-nav{display:flex;}
+
+  @media (min-width:760px){
+    .burger{display:none;}
+    .site-nav{
+      display:flex; flex-direction:row; position:static;
+      border-bottom:none; background:transparent; gap:24px;
+    }
+    .site-nav a{border-top:none; padding:6px 0; font-size:0.9rem;}
+    .site-nav a:hover{background:transparent; color:var(--pygame);}
+  }
+
+  /* ---------- buttons ---------- */
+  .btn{
+    display:inline-block; font-family:var(--font-display); font-weight:700;
+    font-size:0.95rem; padding:14px 22px; border:3px solid var(--line);
+    border-radius:0; cursor:pointer;
+  }
+  .btn-primary{background:var(--ink); color:var(--bg);}
+  .btn-primary:hover{background:var(--pygame); border-color:var(--pygame); color:var(--on-accent);}
+  .btn-outline{background:transparent; color:var(--ink);}
+  .btn-outline:hover{background:var(--ink); color:var(--bg);}
+
+  /* ---------- hero ---------- */
+  .hero{
+    border-bottom:4px solid var(--line);
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size:36px 36px;
+  }
+  .hero-inner{padding:72px 0 48px;}
+  .hero h1{
+    font-size:clamp(2.6rem, 8vw, 5rem);
+    font-weight:900; line-height:1.02; letter-spacing:-0.01em;
+    margin-bottom:24px;
+  }
+  .lede{
+    max-width:540px; font-size:1.1rem; margin-bottom:32px;
+  }
+  .hero-actions{display:flex; flex-wrap:wrap; gap:14px;}
+  .hero-meta{
+    display:grid; grid-template-columns:repeat(3,1fr);
+    border-top:4px solid var(--line);
+  }
+  .meta-block{
+    padding:20px 24px; border-right:1px solid var(--line);
+    display:flex; flex-direction:column; gap:4px;
+  }
+  .meta-block:last-child{border-right:none;}
+  .meta-num{font-size:2.2rem; font-weight:900; font-family:var(--font-mono);}
+  .meta-label{font-size:0.85rem;}
+
+  /* ---------- lessons ---------- */
+  .lesson{border-bottom:4px solid var(--line); padding:56px 0;}
+  .lesson:nth-of-type(even){background:var(--bg-alt);}
+  .lesson-inner{display:grid; grid-template-columns:130px 1fr; gap:32px;}
+  .lesson-num{font-family:var(--font-mono); font-size:3.5rem; font-weight:700; line-height:1;}
+  .lesson-head{display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:14px;}
+  .badge{
+    font-family:var(--font-mono); font-size:0.78rem; font-weight:700;
+    padding:5px 10px; color:var(--on-accent);
+  }
+  .badge-turtle{background:var(--turtle);}
+  .badge-tkinter{background:var(--tkinter);}
+  .badge-pygame{background:var(--pygame);}
+  .lesson h2{font-size:clamp(1.5rem,4vw,2.1rem); font-weight:900;}
+  .lesson-intro{max-width:640px; margin-bottom:24px;}
+  .lesson h3{font-size:1rem; font-weight:700; margin-bottom:10px; margin-top:28px;}
+  .learn-list{list-style:none; display:flex; flex-direction:column; gap:8px; max-width:520px;}
+  .learn-list li{padding-left:20px; position:relative;}
+  .learn-list li::before{content:"—"; position:absolute; left:0;}
+
+  .code-card{
+    border:3px solid var(--line); margin-top:12px; max-width:640px;
+  }
+  .code-bar{
+    display:flex; align-items:center; gap:10px;
+    padding:8px 14px; border-bottom:3px solid var(--line);
+    font-family:var(--font-mono); font-size:0.8rem;
+    background:var(--panel); color:var(--panel-ink);
+  }
+  .code-dot{width:10px; height:10px; flex-shrink:0;}
+  .dot-turtle{background:var(--turtle);}
+  .dot-tkinter{background:var(--tkinter);}
+  .dot-pygame{background:var(--pygame);}
+  .code-card pre{
+    margin:0; padding:18px; overflow-x:auto;
+    background:var(--panel); color:var(--panel-ink);
+    font-family:var(--font-mono); font-size:0.85rem; line-height:1.6;
+  }
+
+  .exercises{max-width:560px; padding-left:22px;}
+  .exercises li{margin-bottom:10px;}
+
+  .next-link{
+    display:inline-block; margin-top:28px; font-family:var(--font-mono);
+    font-size:0.85rem; border-bottom:2px solid var(--line); padding-bottom:2px;
+  }
+
+  @media (max-width:640px){
+    .lesson-inner{grid-template-columns:1fr; gap:12px;}
+    .lesson-num{font-size:2.2rem;}
+    .hero-meta{grid-template-columns:1fr;}
+    .meta-block{border-right:none; border-bottom:1px solid var(--line);}
+  }
+
+  /* ---------- footer ---------- */
+  footer{padding:48px 0 64px;}
+  .footer-inner{display:flex; flex-direction:column; gap:18px; max-width:520px;}
+  footer p{font-size:0.95rem;}
+  .credit{font-family:var(--font-mono); font-size:0.8rem; opacity:0.7;}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="#top" class="logo">PY_BASICS</a>
+    <input type="checkbox" id="nav-toggle">
+    <label for="nav-toggle" class="burger">MENU</label>
+    <nav class="site-nav">
+      <a href="#lesson-1">01 Turtle</a>
+      <a href="#lesson-2">02 Tkinter</a>
+      <a href="#lesson-3">03 Pygame</a>
+      <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero" id="top">
+  <div class="wrap hero-inner">
+    <h1>Draw it.<br>Click it.<br>Play it.</h1>
+    <p class="lede">A free 3-lesson mini-course that teaches real programming ideas by building things — starting with a drawing, then a clickable app, then a working game. Written for classrooms and curious kids. No coding background needed.</p>
+    <div class="hero-actions">
+      <a href="https://github.com/" class="btn btn-primary" target="_blank" rel="noopener">View the code on GitHub</a>
+      <a href="#lesson-1" class="btn btn-outline">Start Lesson 01</a>
+    </div>
+  </div>
+  <div class="wrap" style="padding:0;">
+    <div class="hero-meta">
+      <div class="meta-block"><span class="meta-num">3</span><span class="meta-label">lessons</span></div>
+      <div class="meta-block"><span class="meta-num">3</span><span class="meta-label">Python libraries</span></div>
+      <div class="meta-block"><span class="meta-num">0</span><span class="meta-label">experience required</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="lesson-1">
+  <div class="wrap lesson-inner">
+    <div class="lesson-num">01</div>
+    <div>
+      <div class="lesson-head">
+        <span class="badge badge-turtle">TURTLE</span>
+        <h2>Draw with code</h2>
+      </div>
+      <p class="lesson-intro">Before graphics or game logic, every programmer starts with the same three ideas: variables, loops, and functions. This lesson teaches them the most visual way possible — by steering a turtle around the screen until it draws something.</p>
+
+      <h3>What you'll learn</h3>
+      <ul class="learn-list">
+        <li>Variables and basic data types</li>
+        <li>for loops that repeat an action</li>
+        <li>Writing your own functions</li>
+      </ul>
+
+      <h3>Example: a colored square</h3>
+      <div class="code-card">
+        <div class="code-bar"><span class="code-dot dot-turtle"></span>lesson1_turtle.py</div>
+        <pre><code>import turtle
+
+artist = turtle.Turtle()
+colors = ["red", "orange", "yellow", "green"]
+
+for i in range(4):
+    artist.color(colors[i])
+    artist.forward(100)
+    artist.left(90)
+
+turtle.done()</code></pre>
+      </div>
+
+      <h3>Try it yourself</h3>
+      <ol class="exercises">
+        <li>Change the loop so it draws a triangle, then a hexagon.</li>
+        <li>Write a function <code>draw_shape(sides, length)</code> that can draw any polygon.</li>
+        <li>Challenge: make the turtle draw a spiral by increasing the forward distance a little on every pass through the loop.</li>
+      </ol>
+
+      <a href="#lesson-2" class="next-link">Next: Lesson 02 — Tkinter</a>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="lesson-2">
+  <div class="wrap lesson-inner">
+    <div class="lesson-num">02</div>
+    <div>
+      <div class="lesson-head">
+        <span class="badge badge-tkinter">TKINTER</span>
+        <h2>Build a window people can click</h2>
+      </div>
+      <p class="lesson-intro">A program that only runs top-to-bottom in a terminal feels abstract. Tkinter changes that by giving code a window, a label, and a button. This lesson is about event-driven thinking: code that waits for you to act.</p>
+
+      <h3>What you'll learn</h3>
+      <ul class="learn-list">
+        <li>Creating windows, labels, and buttons</li>
+        <li>Connecting a button to a function</li>
+        <li>Keeping track of state while the program runs</li>
+      </ul>
+
+      <h3>Example: a click counter</h3>
+      <div class="code-card">
+        <div class="code-bar"><span class="code-dot dot-tkinter"></span>lesson2_tkinter.py</div>
+        <pre><code>import tkinter as tk
+
+def add_click():
+    global count
+    count += 1
+    label.config(text=f"Clicks: {count}")
+
+count = 0
+window = tk.Tk()
+window.title("Click Counter")
+
+label = tk.Label(window, text="Clicks: 0", font=("Arial", 20))
+label.pack(pady=20)
+
+button = tk.Button(window, text="Click me", command=add_click)
+button.pack(pady=10)
+
+window.mainloop()</code></pre>
+      </div>
+
+      <h3>Try it yourself</h3>
+      <ol class="exercises">
+        <li>Add a "Reset" button that sets the count back to zero.</li>
+        <li>Add a second label that shows "Even" or "Odd" based on the current count.</li>
+        <li>Challenge: turn this into a tip calculator with an entry box for the bill and a button that shows a 15% tip.</li>
+      </ol>
+
+      <a href="#lesson-3" class="next-link">Next: Lesson 03 — Pygame</a>
+    </div>
+  </div>
+</section>
+
+<section class="lesson" id="lesson-3">
+  <div class="wrap lesson-inner">
+    <div class="lesson-num">03</div>
+    <div>
+      <div class="lesson-head">
+        <span class="badge badge-pygame">PYGAME</span>
+        <h2>Turn your code into a game</h2>
+      </div>
+      <p class="lesson-intro">Pygame brings the first two lessons together — drawing and interactivity — inside a loop that runs 60 times a second. By the end of this lesson, students have a square they can drive around the screen with the arrow keys.</p>
+
+      <h3>What you'll learn</h3>
+      <ul class="learn-list">
+        <li>The game loop: update, draw, repeat</li>
+        <li>Reading keyboard input every frame</li>
+        <li>Basic boundary and collision checks</li>
+      </ul>
+
+      <h3>Example: a square you can drive</h3>
+      <div class="code-card">
+        <div class="code-bar"><span class="code-dot dot-pygame"></span>lesson3_pygame.py</div>
+        <pre><code>import pygame
+
+pygame.init()
+screen = pygame.display.set_mode((400, 400))
+clock = pygame.time.Clock()
+x, y = 180, 180
+
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_LEFT]:
+        x -= 4
+    if keys[pygame.K_RIGHT]:
+        x += 4
+
+    screen.fill((20, 20, 20))
+    pygame.draw.rect(screen, (255, 90, 0), (x, y, 40, 40))
+    pygame.display.flip()
+    clock.tick(60)
+
+pygame.quit()</code></pre>
+      </div>
+
+      <h3>Try it yourself</h3>
+      <ol class="exercises">
+        <li>Add up and down movement with the up and down arrow keys.</li>
+        <li>Make the square bounce off the edge of the screen instead of leaving it.</li>
+        <li>Challenge: add a second rectangle and detect when the two overlap.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-inner">
+    <p>This course is free, open-source, and built for classrooms. Lesson plans, slides, and full solutions are in the repo.</p>
+    <a href="https://github.com/" class="btn btn-outline" target="_blank" rel="noopener">github.com/yourusername/python-basics-course</a>
+    <p class="credit">Built with Python 3, Turtle, Tkinter, and Pygame.</p>
+  </div>
+</footer>
+
+</body>
+</html>
