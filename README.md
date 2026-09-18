@@ -85,7 +85,3 @@ Open `index.html` in any web browser to read the full lessons, including explana
 
 Made by **Harris Samuel J**, Computer Science student.
 GitHub: [itzhp27](https://github.com/itzhp27)
-
-## License
-
-Add a license of your choice (for example, MIT) or remove this section.
